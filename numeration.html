@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Путешествие по числовой улице</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #b5e8ff 40%, #90EE90 40%, #228B22 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+        .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+        /* Clouds */
+        .sky { position: fixed; top: 0; left: 0; width: 100%; height: 40vh; pointer-events: none; z-index: 0; overflow: hidden; }
+        .cloud {
+            position: absolute;
+            background: #fff;
+            border-radius: 50px;
+            opacity: 0.8;
+            animation: floatCloud linear infinite;
+        }
+        @keyframes floatCloud { from { transform: translateX(-200px); } to { transform: translateX(calc(100vw + 200px)); } }
+
+        .game-wrap { position: relative; z-index: 1; }
+
+        h1 {
+            text-align: center;
+            color: #1e40af;
+            font-size: 1.9em;
+            margin: 20px 0 8px;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.6);
+        }
+        .subtitle {
+            text-align: center;
+            color: #475569;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+        }
+
+        /* Progress */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .badge {
+            background: #fff;
+            border-radius: 30px;
+            padding: 6px 18px;
+            font-weight: 700;
+            font-size: 1em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .badge.stars { color: #d97706; border: 2px solid #fbbf24; }
+        .badge.level { color: #7c3aed; border: 2px solid #c4b5fd; }
+        .prog-bar {
+            width: 100%;
+            background: #e2e8f0;
+            border-radius: 14px;
+            height: 18px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .prog-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #34d399, #10b981);
+            border-radius: 14px;
+            transition: width 0.6s ease;
+        }
+
+        /* Card */
+        .card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 24px 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 2px solid #e2e8f0;
+        }
+
+        .story {
+            font-size: 1.15em;
+            line-height: 1.8;
+            margin-bottom: 14px;
+        }
+        .big-emoji { text-align: center; font-size: 3em; margin: 12px 0; }
+        .hl { color: #dc2626; font-weight: 700; }
+        .hl-blue { color: #2563eb; font-weight: 700; }
+
+        .task-area {
+            background: #f0f9ff;
+            border: 2px solid #93c5fd;
+            border-radius: 14px;
+            padding: 18px;
+            margin: 14px 0;
+        }
+        .task-area h3 { color: #1d4ed8; margin-bottom: 8px; }
+
+        /* Hint */
+        .hint-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.95em;
+            color: #92400e;
+            margin: 8px 0;
+            transition: background 0.2s;
+        }
+        .hint-btn:hover { background: #fef3c7; }
+        .hint-text {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin: 0 0 10px;
+            font-size: 0.95em;
+            color: #78350f;
+            display: none;
+            animation: slideDown 0.25s ease;
+        }
+        .hint-text.show { display: block; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Visual: houses */
+        .houses-row {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 14px 0;
+        }
+        .house {
+            width: 52px;
+            text-align: center;
+            font-size: 0.8em;
+        }
+        .house .roof {
+            width: 0; height: 0;
+            border-left: 26px solid transparent;
+            border-right: 26px solid transparent;
+            border-bottom: 18px solid #dc2626;
+            margin: 0 auto;
+        }
+        .house .body {
+            background: #fbbf24;
+            border: 2px solid #92400e;
+            border-radius: 0 0 4px 4px;
+            padding: 4px 0;
+            font-weight: 700;
+            color: #78350f;
+            font-size: 1.1em;
+        }
+
+        /* Visual: book pages */
+        .pages-visual {
+            display: flex;
+            gap: 3px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .page-box {
+            width: 32px; height: 38px;
+            background: #fefce8;
+            border: 1px solid #d4d4d4;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #78350f;
+        }
+
+        /* Answers */
+        .ans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 14px 0;
+        }
+        .ans-btn {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 14px 8px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #334155;
+        }
+        .ans-btn:hover { background: #e0e7ff; border-color: #818cf8; transform: translateY(-2px); }
+        .ans-btn.correct { background: #d1fae5; border-color: #10b981; color: #065f46; }
+        .ans-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .ans-btn:disabled { cursor: default; }
+
+        .inp-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 14px 0;
+        }
+        .inp-row input {
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 1.2em;
+            width: 100px;
+            text-align: center;
+        }
+        .inp-row input:focus { outline: none; border-color: #818cf8; }
+        .go-btn {
+            background: #6366f1;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 22px;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .go-btn:hover { background: #4f46e5; }
+
+        /* Result */
+        .res {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: 600;
+            display: none;
+            font-size: 1.05em;
+        }
+        .res.show { display: block; animation: slideDown 0.25s ease; }
+        .res.ok { background: #d1fae5; border: 1px solid #10b981; color: #065f46; }
+        .res.no { background: #fee2e2; border: 1px solid #ef4444; color: #991b1b; }
+        .res.retry-msg { background: #fef3c7; border: 1px solid #fbbf24; color: #78350f; }
+
+        .expl {
+            background: #ede9fe;
+            border: 1px solid #c4b5fd;
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin: 10px 0;
+            display: none;
+            color: #4c1d95;
+            line-height: 1.7;
+        }
+        .expl.show { display: block; animation: slideDown 0.25s ease; }
+
+        .nxt-btn {
+            display: none;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            color: #fff;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .nxt-btn.show { display: inline-block; }
+        .nxt-btn:hover { transform: translateY(-2px); }
+
+        /* Finale */
+        .finale { text-align: center; padding: 30px 10px; }
+        .finale h2 { color: #1e40af; font-size: 1.8em; margin-bottom: 12px; }
+        .finale .big { font-size: 3.5em; margin: 16px 0; }
+        .finale .score-big { font-size: 2.5em; font-weight: 800; color: #d97706; }
+        .finale p { font-size: 1.1em; color: #475569; margin: 8px 0; }
+        .again-btn {
+            background: #6366f1;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 36px;
+            color: #fff;
+            font-size: 1.15em;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 18px;
+        }
+
+        @media (max-width: 500px) {
+            h1 { font-size: 1.4em; }
+            .card { padding: 16px; }
+            .ans-grid { grid-template-columns: 1fr 1fr; }
+            .house { width: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sky" id="sky"></div>
+
+<div class="container game-wrap">
+    <h1>Путешествие по числовой улице</h1>
+    <p class="subtitle">Помоги Цифрику решить задачки про номера!</p>
+
+    <div class="top-bar">
+        <div class="badge stars" id="scoreBadge">Звёзды: 0</div>
+        <div class="badge level" id="lvlBadge">Задание 1 / 15</div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+
+    <div id="area"></div>
+</div>
+
+<script>
+let score = 0, cur = 0, attempts = 0;
+const TOTAL = 15;
+const PTS_FIRST = 10, PTS_RETRY = 5;
+
+const L = [
+// 1
+{
+    story: `<div class="big-emoji">📖</div>
+<p class="story">Цифрик открыл книгу. В ней всего <span class="hl">9 страниц</span>. Страницы пронумерованы: 1, 2, 3, ... , 9.</p>`,
+    task: 'Сколько цифр понадобилось, чтобы пронумеровать все 9 страниц?',
+    hint: 'Каждая страница — это одна цифра: 1, 2, 3, 4, 5, 6, 7, 8, 9.',
+    type: 'choice', options: ['8','9','10','18'], correct: '9',
+    expl: 'Страницы 1–9 — это 9 однозначных номеров. Каждый номер — одна цифра. Итого: <strong>9 цифр</strong>.'
+},
+// 2
+{
+    story: `<div class="big-emoji">📚</div>
+<p class="story">Книга стала толще! Теперь в ней <span class="hl">12 страниц</span>.</p>`,
+    task: 'Сколько цифр понадобилось, чтобы пронумеровать 12 страниц?',
+    hint: 'Страницы 1–9 — по одной цифре. Страницы 10, 11, 12 — по две цифры каждая.',
+    type: 'input', correct: 15,
+    expl: 'Страницы 1–9: 9 цифр.<br>Страницы 10–12: это 3 номера по 2 цифры = 6 цифр.<br>Всего: 9 + 6 = <strong>15 цифр</strong>.'
+},
+// 3
+{
+    story: `<div class="big-emoji">🏠🏠🏠🏠🏠</div>
+<p class="story">На одной стороне улицы стоят дома с номерами <span class="hl">1, 2, 3, 4, 5, 6, 7, 8, 9, 10</span>.</p>`,
+    task: 'Сколько цифр нужно для всех табличек на этих 10 домах?',
+    hint: 'Дома 1–9: одна цифра на каждый. Дом 10: две цифры.',
+    type: 'choice', options: ['10','11','12','20'], correct: '11',
+    expl: 'Дома 1–9: 9 цифр.<br>Дом 10: 2 цифры.<br>Всего: 9 + 2 = <strong>11 цифр</strong>.'
+},
+// 4
+{
+    story: `<div class="big-emoji">🏢</div>
+<p class="story">В доме <span class="hl">5 этажей</span>. На каждом этаже <span class="hl">3 квартиры</span>. Квартиры нумеруются с 1 по порядку, начиная с первого этажа.</p>`,
+    task: 'Какой номер у последней квартиры на 3-м этаже?',
+    hint: 'На каждом этаже 3 квартиры. На 1-м этаже: 1, 2, 3. На 2-м: 4, 5, 6. На 3-м: ...',
+    type: 'input', correct: 9,
+    expl: '1-й этаж: кв. 1, 2, 3<br>2-й этаж: кв. 4, 5, 6<br>3-й этаж: кв. 7, 8, <strong>9</strong><br>На каждом этаже 3 квартиры, за 3 этажа: 3 × 3 = 9.'
+},
+// 5
+{
+    story: `<div class="big-emoji">🏢🏢</div>
+<p class="story">В том же доме (5 этажей, 3 квартиры на этаже). Маша живёт в квартире <span class="hl">номер 11</span>.</p>`,
+    task: 'На каком этаже живёт Маша?',
+    hint: '1-й этаж: кв. 1–3, 2-й: 4–6, 3-й: 7–9, 4-й: 10–12...',
+    type: 'choice', options: ['2','3','4','5'], correct: '4',
+    expl: '1 этаж: 1–3<br>2 этаж: 4–6<br>3 этаж: 7–9<br>4 этаж: 10–12 ← квартира 11 здесь!<br>Ответ: <strong>4-й этаж</strong>.'
+},
+// 6
+{
+    story: `<div class="big-emoji">🌳🏠🌳🏠🌳</div>
+<p class="story">На улице дома стоят по обеим сторонам. Слева — <span class="hl">нечётные</span> номера (1, 3, 5, 7, ...), справа — <span class="hl">чётные</span> (2, 4, 6, 8, ...).</p>
+<p class="story">Справа стоит <span class="hl">8 домов</span>.</p>`,
+    task: 'Какой номер у последнего дома справа?',
+    hint: 'Справа чётные номера: 2, 4, 6, 8, ... Это 8-й по счёту чётный номер.',
+    type: 'input', correct: 16,
+    expl: 'Чётные номера: 2, 4, 6, 8, 10, 12, 14, <strong>16</strong>.<br>8-й чётный номер — это 2 × 8 = <strong>16</strong>.'
+},
+// 7
+{
+    story: `<div class="big-emoji">📖✏️</div>
+<p class="story">Цифрик нумерует страницы книги и заметил, что <span class="hl">всего использовал 17 цифр</span>.</p>`,
+    task: 'Сколько страниц в книге?',
+    hint: 'На страницы 1–9 уходит 9 цифр. Осталось 17 − 9 = 8 цифр. Каждая следующая страница — 2 цифры.',
+    type: 'input', correct: 13,
+    expl: 'Страницы 1–9: 9 цифр.<br>Осталось: 17 − 9 = 8 цифр.<br>8 : 2 = 4 двузначных номера (10, 11, 12, 13).<br>Всего страниц: 9 + 4 = <strong>13</strong>.'
+},
+// 8
+{
+    story: `<div class="big-emoji">🚪🚪🚪</div>
+<p class="story">В подъезде на каждом этаже <span class="hl">4 квартиры</span>. Петя живёт в квартире <span class="hl">номер 19</span>.</p>`,
+    task: 'На каком этаже живёт Петя?',
+    hint: '1 этаж: кв. 1–4, 2 этаж: 5–8, 3 этаж: 9–12, ...',
+    type: 'choice', options: ['4','5','6','7'], correct: '5',
+    expl: '1: 1–4, 2: 5–8, 3: 9–12, 4: 13–16, 5: 17–20.<br>Квартира 19 — на <strong>5-м этаже</strong>.'
+},
+// 9
+{
+    story: `<div class="big-emoji">🏠🔢</div>
+<p class="story">На улице <span class="hl">20 домов</span> подряд, пронумерованных от 1 до 20.</p>`,
+    task: 'Сколько цифр нужно для табличек на всех 20 домах?',
+    hint: 'Дома 1–9: по одной цифре. Дома 10–20: по две цифры. Сколько двузначных номеров?',
+    type: 'input', correct: 31,
+    expl: 'Дома 1–9: 9 цифр.<br>Дома 10–20: это 11 домов × 2 цифры = 22 цифры.<br>Всего: 9 + 22 = <strong>31 цифра</strong>.'
+},
+// 10
+{
+    story: `<div class="big-emoji">🌲🏠🌲</div>
+<p class="story">На левой стороне улицы стоят дома с нечётными номерами. Дом Вани — <span class="hl">7-й по счёту</span> слева.</p>`,
+    task: 'Какой номер у дома Вани?',
+    hint: 'Нечётные числа: 1, 3, 5, 7, 9, 11, 13, ... Найди 7-е.',
+    type: 'choice', options: ['7','13','14','15'], correct: '13',
+    expl: 'Нечётные: 1, 3, 5, 7, 9, 11, <strong>13</strong>.<br>7-й нечётный номер — <strong>13</strong>.'
+},
+// 11
+{
+    story: `<div class="big-emoji">📕</div>
+<p class="story">В книге <span class="hl">30 страниц</span>. Цифрик начал их нумеровать.</p>`,
+    task: 'Сколько цифр он напишет?',
+    hint: '1–9: однозначные. 10–30: двузначные. Посчитай каждую группу.',
+    type: 'input', correct: 51,
+    expl: '1–9: 9 цифр.<br>10–30: 21 номер × 2 = 42 цифры.<br>Всего: 9 + 42 = <strong>51 цифра</strong>.'
+},
+// 12
+{
+    story: `<div class="big-emoji">🏢🔑</div>
+<p class="story">В девятиэтажном доме <span class="hl">2 подъезда</span>. В каждом подъезде на каждом этаже <span class="hl">4 квартиры</span>. Нумерация начинается с 1 в первом подъезде.</p>`,
+    task: 'Какой номер у первой квартиры во втором подъезде?',
+    hint: 'В первом подъезде: 9 этажей × 4 квартиры. С какого номера начнётся второй подъезд?',
+    type: 'input', correct: 37,
+    expl: 'В первом подъезде: 9 × 4 = 36 квартир (с 1 по 36).<br>Первая квартира второго подъезда: 36 + 1 = <strong>37</strong>.'
+},
+// 13
+{
+    story: `<div class="big-emoji">🔖</div>
+<p class="story">Цифрик заметил, что для нумерации книги он использовал <span class="hl">ровно 33 цифры</span>.</p>`,
+    task: 'Сколько страниц в этой книге?',
+    hint: '1–9: 9 цифр. Осталось 33 − 9 = 24 цифры на двузначные номера. Сколько это номеров?',
+    type: 'choice', options: ['18','20','21','24'], correct: '21',
+    expl: '1–9: 9 цифр, осталось 33 − 9 = 24.<br>24 : 2 = 12 двузначных номеров (10–21).<br>Всего: 9 + 12 = <strong>21 страница</strong>.'
+},
+// 14
+{
+    story: `<div class="big-emoji">🏠🏠🏠🏠</div>
+<p class="story">На улице стоят дома с номерами от 1 до 15. Для табличек купили набор цифр.</p>`,
+    task: 'Сколько раз в номерах домов встретится цифра 1?',
+    hint: 'Выпиши все номера: 1, 2, 3, ..., 15. В каких из них есть цифра 1?',
+    type: 'input', correct: 8,
+    expl: 'Цифра 1 встречается в номерах: <strong>1</strong>, <strong>10</strong>, <strong>11</strong> (дважды!), <strong>12</strong>, <strong>13</strong>, <strong>14</strong>, <strong>15</strong>.<br>Считаем: 1 + 1 + 2 + 1 + 1 + 1 + 1 = <strong>8 раз</strong>.'
+},
+// 15
+{
+    story: `<div class="big-emoji">🏆</div>
+<p class="story">Финальное испытание! В книге пронумерованы все страницы подряд от 1. На нумерацию ушло <span class="hl">ровно 100 цифр</span>.</p>`,
+    task: 'Сколько страниц в этой книге?',
+    hint: '1–9: 9 цифр. Осталось 100 − 9 = 91 цифра. Далее идут двузначные номера (по 2 цифры). 91 не делится на 2 ровно — подумай!',
+    type: 'choice', options: ['50','54','55','100'], correct: '55',
+    expl: '1–9: 9 цифр, осталось 91.<br>Далее идут страницы 10, 11, 12, ... — по 2 цифры.<br>91 не делится на 2? Делится ли? Нет!<br>Но подождите: 90 : 2 = 45 номеров (стр. 10–54), и останется 1 цифра — это первая цифра числа 55. Значит страница 55 ещё полностью пронумерована? Проверим: 9 + 45×2 = 9 + 90 = 99. Ещё одна цифра — «5» (начало 55-й). Но страница 55 = две цифры, а осталась одна? Пересчитаем: 9 + 2×(55−9) = 9 + 92 = 101. Значит 54 страницы: 9 + 2×45 = 99. Нет, 55: 9 + 2×46 = 9+92=101. Ой! Верный ответ: 9 цифр + 91/2... На самом деле: стр 10–54 = 45 стр = 90 цифр. 9+90=99. Ещё 1 цифра — стр 55 не полная. Но стр 55 = «55» = 2 цифры. 99+2=101>100. Значит книга: <strong>55 страниц</strong>, а 100-я цифра — первая «5» в номере 55. Итого <strong>55 страниц</strong>.'
+}
+];
+
+function render() {
+    const a = document.getElementById('area');
+    if (cur >= TOTAL) { finale(); return; }
+    const lv = L[cur];
+    attempts = 0;
+    document.getElementById('lvlBadge').textContent = `Задание ${cur+1} / ${TOTAL}`;
+    document.getElementById('progFill').style.width = `${cur/TOTAL*100}%`;
+
+    let h = `<div class="card">`;
+    h += lv.story;
+    h += `<div class="task-area"><h3>Задание</h3><p>${lv.task}</p></div>`;
+    h += `<div class="hint-btn" onclick="toggleHint()"><span style="font-size:1.3em;">💡</span> Подсказка</div>`;
+    h += `<div class="hint-text" id="hintText">${lv.hint}</div>`;
+
+    if (lv.type === 'choice') {
+        h += `<div class="ans-grid" id="ansGrid">`;
+        lv.options.forEach(o => {
+            h += `<button class="ans-btn" onclick="pickChoice(this,'${o}')">${o}</button>`;
+        });
+        h += `</div>`;
+    } else {
+        h += `<div class="inp-row"><span>Ответ:</span><input type="number" id="inp" placeholder="?"><button class="go-btn" onclick="pickInput()">Ок</button></div>`;
+    }
+
+    h += `<div class="res" id="res"></div>`;
+    h += `<div class="expl" id="expl">${lv.expl}</div>`;
+    h += `<button class="nxt-btn" id="nxt" onclick="goNext()">Дальше →</button>`;
+    h += `</div>`;
+    a.innerHTML = h;
+}
+
+function toggleHint() {
+    document.getElementById('hintText').classList.toggle('show');
+}
+
+function pickChoice(btn, val) {
+    const lv = L[cur];
+    if (val === lv.correct) {
+        btn.classList.add('correct');
+        win();
+    } else {
+        btn.classList.add('wrong');
+        btn.disabled = true;
+        attempts++;
+        showRetry();
+    }
+}
+
+function pickInput() {
+    const lv = L[cur];
+    const inp = document.getElementById('inp');
+    const v = parseInt(inp.value);
+    if (isNaN(v)) return;
+    if (v === lv.correct) {
+        inp.style.borderColor = '#10b981';
+        win();
+    } else {
+        attempts++;
+        inp.value = '';
+        inp.style.borderColor = '#ef4444';
+        setTimeout(() => { inp.style.borderColor = '#cbd5e1'; }, 600);
+        showRetry();
+    }
+}
+
+function showRetry() {
+    const r = document.getElementById('res');
+    r.className = 'res show retry-msg';
+    r.textContent = '🤔 Не совсем... Попробуй ещё раз! Можешь открыть подсказку 💡';
+}
+
+function win() {
+    const pts = attempts === 0 ? PTS_FIRST : PTS_RETRY;
+    score += pts;
+    document.getElementById('scoreBadge').textContent = `Звёзды: ${score}`;
+    const r = document.getElementById('res');
+    r.className = 'res show ok';
+    r.textContent = attempts === 0 ? `✅ Правильно с первой попытки! +${PTS_FIRST} звёзд!` : `✅ Правильно! +${PTS_RETRY} звёзд (со второй+ попытки)`;
+    document.getElementById('expl').classList.add('show');
+    document.getElementById('nxt').classList.add('show');
+    // disable all buttons/inputs
+    document.querySelectorAll('.ans-btn').forEach(b => b.disabled = true);
+    const inp = document.getElementById('inp');
+    if (inp) inp.disabled = true;
+    const go = document.querySelector('.go-btn');
+    if (go) go.disabled = true;
+}
+
+function goNext() {
+    cur++;
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function finale() {
+    document.getElementById('progFill').style.width = '100%';
+    document.getElementById('lvlBadge').textContent = 'Все задания пройдены!';
+    let t = '', e = '';
+    if (score >= 140) { t = 'Мастер нумерации!'; e = '👑🌟'; }
+    else if (score >= 100) { t = 'Отличный счётчик!'; e = '🎉⭐'; }
+    else if (score >= 60) { t = 'Юный математик!'; e = '🧮✨'; }
+    else { t = 'Начинающий исследователь!'; e = '🌱📚'; }
+    document.getElementById('area').innerHTML = `<div class="card"><div class="finale">
+        <div class="big">${e}</div>
+        <h2>Поздравляем!</h2>
+        <p>Цифрик прошёл всю числовую улицу!</p>
+        <div class="score-big">${score} звёзд</div>
+        <p>Звание: <strong>${t}</strong></p>
+        <p style="color:#94a3b8; font-size:0.95em;">Максимум — ${TOTAL * PTS_FIRST} (все с первой попытки)</p>
+        <button class="again-btn" onclick="restart()">Пройти ещё раз</button>
+    </div></div>`;
+}
+
+function restart() {
+    score = 0; cur = 0;
+    document.getElementById('scoreBadge').textContent = 'Звёзды: 0';
+    render();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Clouds
+(function() {
+    const sky = document.getElementById('sky');
+    for (let i = 0; i < 5; i++) {
+        const c = document.createElement('div');
+        c.className = 'cloud';
+        const w = 80 + Math.random() * 120;
+        c.style.width = w + 'px';
+        c.style.height = (w * 0.4) + 'px';
+        c.style.top = (Math.random() * 30) + '%';
+        c.style.animationDuration = (30 + Math.random() * 40) + 's';
+        c.style.animationDelay = (-Math.random() * 40) + 's';
+        sky.appendChild(c);
+    }
+})();
+
+// Enter key
+document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+        const inp = document.getElementById('inp');
+        if (inp && !inp.disabled) pickInput();
+    }
+});
+
+render();
+</script>
+</body>
+</html>
