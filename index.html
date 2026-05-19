@@ -150,6 +150,43 @@
 
   .bottom-note { margin-top: 24px; font-size: 18px; color: #777; font-style: italic; max-width: 800px; }
 
+  .corner-img {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    width: 220px;
+    height: auto;
+    opacity: 0.95;
+  }
+
+  .dino-img {
+    width: 130px;
+    height: auto;
+    margin-top: 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .deco-quote {
+    position: absolute;
+    font-family: Georgia, serif;
+    font-size: 280px;
+    color: rgba(176, 58, 46, 0.08);
+    font-weight: bold;
+    line-height: 1;
+    user-select: none;
+    pointer-events: none;
+  }
+  .deco-quote.tl { top: 40px; left: 60px; }
+  .deco-quote.br { bottom: 60px; right: 60px; transform: rotate(180deg); }
+  .sparkles {
+    position: absolute;
+    font-size: 28px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
   .compare-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -210,6 +247,7 @@
 
 <!-- Slide 1: Titre -->
 <div class="slide active">
+  <img src="landing_IA.png" alt="" class="corner-img">
   <h1>L'IA en classe</h1>
   <p class="subtitle">Mon expérience d'enseignante privée avec Claude</p>
   <p style="font-size:20px;color:#888;max-width:700px">Un outil qui change la façon de préparer ses cours — entre enthousiasme et précautions</p>
@@ -247,6 +285,7 @@
         <li>Inventer des problèmes avec une histoire</li>
         <li>Créer des sites interactifs personnalisés</li>
       </ul>
+      <img src="dino.jpg" alt="" class="dino-img">
     </div>
     <div class="col col-grands">
       <h3>🎓 Pour les grands</h3>
@@ -304,6 +343,12 @@
 
 <!-- Slide 9: Ce que ça change -->
 <div class="slide">
+  <span class="deco-quote tl">«</span>
+  <span class="deco-quote br">«</span>
+  <span class="sparkles" style="top:25%;left:15%">✨</span>
+  <span class="sparkles" style="top:70%;left:10%">✨</span>
+  <span class="sparkles" style="top:20%;right:18%">✨</span>
+  <span class="sparkles" style="top:75%;right:14%">✨</span>
   <h2>Ce que ça change vraiment</h2>
   <p class="quote">L'IA ne remplace pas mon travail.<br>Elle me permet de faire ce que je n'aurais pas pu faire seule.</p>
   <p class="bottom-note">Sans l'IA, je n'aurais ni le temps ni les compétences techniques pour créer un site interactif pour chaque leçon.</p>
@@ -331,7 +376,6 @@
 <!-- Slide 12: Merci -->
 <div class="slide">
   <h1 style="font-size:72px">Merci de votre attention !</h1>
-  <p style="font-size:30px;color:#777;margin-top:30px">🇫🇷</p>
 </div>
 
 <!-- Navigation -->
