@@ -87,6 +87,50 @@
     font-size: 14px;
   }
   .back:hover { text-decoration: underline; }
+
+  /* === Подсветка для подготовки к выступлению === */
+  .main {
+    background: linear-gradient(transparent 55%, #ffe9a8 55%, #ffe9a8 95%, transparent 95%);
+    padding: 0 2px;
+    font-weight: 600;
+  }
+  .stress {
+    border-bottom: 3px solid #ff6b6b;
+    font-weight: 600;
+    padding-bottom: 1px;
+  }
+  .pause {
+    display: inline-block;
+    color: #1e4c87;
+    font-weight: bold;
+    font-family: -apple-system, sans-serif;
+    font-size: 16px;
+    margin: 0 4px;
+    vertical-align: 2px;
+  }
+  .pause::before { content: "▮"; }
+  .transition {
+    background: #e3edf8;
+    color: #1e4c87;
+    padding: 1px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 15px;
+    font-family: -apple-system, sans-serif;
+  }
+  .legend {
+    background: #fff;
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    border: 2px solid #e0d8c5;
+    font-family: -apple-system, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .legend strong { color: #b03a2e; }
+  .legend-item { margin-bottom: 4px; }
+  .legend-item .sample { display: inline-block; margin-right: 6px; }
 </style>
 </head>
 <body>
@@ -96,70 +140,79 @@
 <h1>L'IA en classe : mon expérience d'enseignante privée</h1>
 <p class="meta">Discours complet · ~7 minutes · ~1000 mots · Olesya Inozemtseva</p>
 
+<div class="legend">
+  <strong>📌 Условные обозначения для подготовки к выступлению:</strong>
+  <div class="legend-item"><span class="sample"><span class="main">главная мысль</span></span> — ключевая фраза раздела, должна прозвучать обязательно</div>
+  <div class="legend-item"><span class="sample"><span class="stress">ударное слово</span></span> — выдели интонацией, говори чуть громче/медленнее</div>
+  <div class="legend-item"><span class="sample"><span class="transition">переход</span></span> — структурный маркер (первое, второе, в итоге…). Помогает слушателю не потеряться</div>
+  <div class="legend-item"><span class="sample"><span class="pause"></span></span> — пауза/вдох. Не торопись после важной мысли — пусть «осядет»</div>
+  <div class="legend-item" style="margin-top:8px"><span class="sample"><span class="key">красный фон</span></span> — лексика из словаря (уже была)</div>
+</div>
+
 <h2>1. Introduction <span class="timing">~45 sec</span></h2>
 <div class="stage">Slides 1-2 (Titre + Plan). Sourire, parler lentement au début.</div>
-<p>Bonjour à tous. Aujourd'hui, je vais vous parler d'un outil qui a vraiment changé ma façon de travailler comme enseignante privée : l'intelligence artificielle — et plus précisément <span class="key">Claude</span>, une IA conversationnelle développée par Anthropic, similaire à ChatGPT.</p>
-<p>Je donne des cours particuliers de mathématiques à plusieurs élèves : des petits, qui apprennent à compter, et des plus grands, qui se préparent à leurs examens. <span class="key">Comme</span> j'ai plusieurs élèves d'âges différents, <span class="key">m'organiser</span> est l'une des <span class="key">clés de la réussite</span> de mon métier : je dois <span class="key">tenir un planning</span> précis, <span class="key">alterner</span> les types de préparation, et <span class="key">ménager des plages</span> dédiées à la création de matériaux personnalisés. Et c'est justement là que l'IA m'aide énormément. Je vais vous montrer concrètement comment, avec un exemple réel — un avant et un après — et bien sûr, je parlerai aussi des limites de cet outil.</p>
+<p>Bonjour à tous. <span class="pause"></span> Aujourd'hui, je vais vous parler d'<span class="main">un outil qui a vraiment changé ma façon de travailler comme enseignante privée</span> : l'intelligence artificielle — et plus précisément <span class="key">Claude</span>, une IA conversationnelle développée par <span class="stress">Anthropic</span>, similaire à <span class="stress">ChatGPT</span>.</p>
+<p>Je donne des cours particuliers de mathématiques à plusieurs élèves : des <span class="stress">petits</span>, qui apprennent à compter, et des <span class="stress">plus grands</span>, qui se préparent à leurs examens. <span class="pause"></span> <span class="key">Comme</span> j'ai plusieurs élèves d'âges différents, <span class="key">m'organiser</span> est l'une des <span class="key">clés de la réussite</span> de mon métier : je dois <span class="key">tenir un planning</span> précis, <span class="key">alterner</span> les types de préparation, et <span class="key">ménager des plages</span> dédiées à la création de matériaux personnalisés. <span class="main">Et c'est justement là que l'IA m'aide énormément.</span> <span class="pause"></span> Je vais vous montrer concrètement comment, avec un exemple réel — un <span class="stress">avant</span> et un <span class="stress">après</span> — et bien sûr, je parlerai aussi des <span class="stress">limites</span> de cet outil.</p>
 
 <h2>2. Quelle IA et pourquoi ? <span class="timing">~30 sec</span></h2>
 <div class="stage">Slide 3. Ton informatif, factuel.</div>
-<p>Avant de commencer, une petite précision : il existe plusieurs IA conversationnelles. Les plus connues sont ChatGPT, Claude, Gemini et Mistral. Personnellement, j'utilise Claude. Pourquoi ? Parce qu'il est très performant en plusieurs langues, et qu'il garde bien le contexte sur de longues conversations — ce qui est utile quand je prépare une série de cours pour le même élève. Mais le fonctionnement de base est similaire pour toutes ces IA : on pose une question, on précise ce qu'on veut, et l'IA répond.</p>
+<p><span class="transition">Avant de commencer</span>, une petite précision : il existe plusieurs IA conversationnelles. Les plus connues sont <span class="stress">ChatGPT, Claude, Gemini et Mistral</span>. <span class="main">Personnellement, j'utilise Claude.</span> Pourquoi ? Parce qu'il est très <span class="stress">performant en plusieurs langues</span>, et qu'il garde bien le <span class="stress">contexte sur de longues conversations</span> — ce qui est utile quand je prépare une série de cours pour le même élève. <span class="pause"></span> Mais le fonctionnement de base est similaire pour toutes ces IA : on pose une question, on précise ce qu'on veut, et l'IA répond.</p>
 
 <h2>3. Mes 4 usages au quotidien <span class="timing">~2 min 30</span></h2>
 <div class="stage">Slides 4, 5, 6. Changer le rythme : plus dynamique. Faire des gestes pour distinguer "petits" et "grands".</div>
 
-<p>J'utilise l'IA de quatre manières différentes, et ça dépend beaucoup de l'âge de mes élèves.</p>
+<p><span class="main">J'utilise l'IA de quatre manières différentes</span>, et ça dépend beaucoup de l'âge de mes élèves.</p>
 
-<p><b>Avec les enfants</b>, je l'utilise surtout pour deux choses.</p>
+<p><span class="transition">Avec les enfants</span>, je l'utilise surtout pour <span class="stress">deux choses</span>.</p>
 
-<p>Premièrement, pour <span class="key">inventer des problèmes mathématiques</span> avec une histoire qui intéresse l'enfant. Par exemple, si mon élève de 7 ans adore les dinosaures, je demande à Claude : <i>« Voici un exemple d'exercice que je travaille avec mon élève de 7 ans. Écris-moi 6 problèmes sur des dinosaures pour entraîner cette notion. »</i>, et je joins un énoncé-modèle. En quelques secondes, j'ai six exercices différents, drôles et parfaitement adaptés à la notion qu'on étudie. Sans l'IA, j'écrirais un seul problème, plat et générique, et l'enfant serait beaucoup moins motivé.</p>
+<p><span class="transition">Premièrement</span>, pour <span class="key">inventer des problèmes mathématiques</span> avec une histoire qui intéresse l'enfant. Par exemple, si mon élève de 7 ans adore les dinosaures, je demande à Claude : <i>« Voici un exemple d'exercice que je travaille avec mon élève de 7 ans. Écris-moi 6 problèmes sur des dinosaures pour entraîner cette notion. »</i>, et je joins un énoncé-modèle. <span class="pause"></span> En quelques secondes, j'ai <span class="stress">six exercices différents</span>, drôles et parfaitement adaptés à la notion qu'on étudie. Sans l'IA, j'écrirais un seul problème, plat et générique, et l'enfant serait beaucoup moins motivé.</p>
 
-<p>Deuxièmement — et c'est peut-être ma découverte préférée — je crée des <span class="key">petits sites interactifs personnalisés</span> pour chaque leçon. Avec des animations, des récompenses, parfois même un petit jeu. Les enfants apprennent vraiment en s'amusant, et leur motivation augmente énormément. Je vous montrerai un exemple dans une minute.</p>
+<p><span class="transition">Deuxièmement</span> — et c'est peut-être ma <span class="stress">découverte préférée</span> — je crée des <span class="key">petits sites interactifs personnalisés</span> pour chaque leçon. Avec des animations, des récompenses, parfois même un petit jeu. <span class="main">Les enfants apprennent vraiment en s'amusant, et leur motivation augmente énormément.</span> <span class="pause"></span> Je vous montrerai un exemple dans une minute.</p>
 
-<p><b>Avec les ados</b>, l'utilisation est complètement différente. Pour ceux qui doivent <span class="key">réviser</span> une matière entière avant un examen, ou <span class="key">rattraper</span> un retard, l'IA est précieuse. Je l'utilise surtout pour :</p>
-<p>— <span class="key">analyser les devoirs</span> et identifier les erreurs qui reviennent ;<br>
+<p><span class="transition">Avec les ados</span>, l'utilisation est <span class="stress">complètement différente</span>. Pour ceux qui doivent <span class="key">réviser</span> une matière entière avant un examen, ou <span class="key">rattraper</span> un retard, l'IA est précieuse. Je l'utilise surtout pour :</p>
+<p>— <span class="key">analyser les devoirs</span> et identifier les <span class="stress">erreurs qui reviennent</span> ;<br>
 — garder une trace, une sorte de <span class="key">statistique</span> des points faibles de chaque élève — ce qui m'aide à <span class="key">déterminer</span> la stratégie pédagogique ;<br>
 — préparer rapidement des <span class="key">fiches théoriques</span> propres et bien mises en page, ce qui permet à mes élèves de rester <span class="key">concentrés</span> sur la compréhension plutôt que sur la recopie ;<br>
 — gagner du temps sur tout ce qui est mise en forme : tableaux, schémas, formules mathématiques.</p>
 
-<p>En résumé : l'IA me fait gagner du temps sur tout ce qui est <i>technique</i>, pour que je <span class="key">puisse</span> me concentrer sur l'essentiel — le <i>pédagogique</i>.</p>
+<p><span class="transition">En résumé</span> : <span class="main">l'IA me fait gagner du temps sur tout ce qui est <i>technique</i>, pour que je <span class="key">puisse</span> me concentrer sur l'essentiel — le <i>pédagogique</i>.</span></p>
 
 <h2>4. Un exemple concret : avant et après <span class="timing">~1 min 30</span></h2>
 <div class="stage">Slide 7 (image "avant"). Laisser le temps à la salle de regarder l'image quelques secondes.</div>
 
-<p>Pour vous montrer concrètement la différence, voici comment se présentaient mes cours <span class="key">avant</span>. Regardez : des énoncés sur papier, en noir et blanc, avec quelques dessins simples. C'est efficace, mais — soyons honnêtes — ce n'est pas très motivant pour un enfant de 7 ans.</p>
+<p>Pour vous montrer concrètement la différence, voici comment se présentaient mes cours <span class="key">avant</span>. <span class="stress">Regardez</span> : des énoncés sur papier, en noir et blanc, avec quelques dessins simples. <span class="pause"></span> C'est efficace, mais — soyons honnêtes — <span class="stress">ce n'est pas très motivant</span> pour un enfant de 7 ans.</p>
 
 <div class="stage">Slide 8 (le prompt). Lire la demande à voix haute.</div>
 
-<p>La semaine dernière, j'ai préparé un cours sur la numération pour mon élève de 7 ans. Voici exactement ce que j'ai demandé à Claude :</p>
+<p>La semaine dernière, j'ai préparé un cours sur la numération pour mon élève de 7 ans. <span class="main">Voici exactement ce que j'ai demandé à Claude :</span></p>
 
 <p style="background:#f0ead8;padding:14px;border-left:3px solid #b03a2e;font-style:italic"><i>« Crée un site interactif avec un comptage de points et la saisie des réponses, sur le thème de la numération, pour des élèves de 7 ans. Voici des exemples d'exercices que tu peux utiliser : [fichier joint avec les énoncés que j'utilisais avant]. »</i></p>
 
-<p>J'ai joint le fichier avec les exercices que vous venez de voir, pour que l'IA <span class="key">reprenne</span> le même contenu pédagogique. Et voilà le résultat, <span class="key">puisque</span> Claude peut analyser un document attaché et en tirer la matière pour générer un nouveau cours.</p>
+<p>J'ai joint le fichier avec les exercices que vous venez de voir, pour que l'IA <span class="key">reprenne</span> le même contenu pédagogique. <span class="stress">Et voilà le résultat</span>, <span class="key">puisque</span> Claude peut analyser un document attaché et en tirer la matière pour générer un nouveau cours.</p>
 
 <div class="stage">Cliquer sur le lien « Voir le résultat ». Faire défiler rapidement pour montrer la variété.</div>
 
-<p>Regardez : la même matière, les mêmes notions — mais avec une carte des niveaux, des étoiles à gagner, des animations, une vraie petite histoire qui guide l'enfant. Sans l'IA, je n'aurais jamais eu le temps — ni les compétences techniques en programmation — de créer quelque chose comme ça. Et mon élève adore ces cours : il me demande même de faire « la suite » la fois d'après.</p>
+<p><span class="stress">Regardez</span> : la <span class="stress">même matière</span>, les mêmes notions — mais avec une carte des niveaux, des étoiles à gagner, des animations, une vraie petite histoire qui guide l'enfant. <span class="pause"></span> Sans l'IA, <span class="main">je n'aurais jamais eu le temps — ni les compétences techniques en programmation — de créer quelque chose comme ça.</span> Et mon élève adore ces cours : il me demande même de faire « la suite » la fois d'après.</p>
 
-<p>C'est ça, pour moi, le vrai apport de l'IA : elle ne remplace pas mon travail d'enseignante, mais elle me permet de proposer des choses que je n'aurais pas pu faire seule.</p>
+<p><span class="main">C'est ça, pour moi, le vrai apport de l'IA : elle ne remplace pas mon travail d'enseignante, mais elle me permet de proposer des choses que je n'aurais pas pu faire seule.</span></p>
 
 <h2>5. Les limites et précautions <span class="timing">~1 min 30</span></h2>
 <div class="stage">Slide 10. Ton plus sérieux. C'est ce qui rend le discours équilibré et crédible.</div>
 
-<p><span class="key">Bien que</span> l'IA <span class="key">soit</span> un outil très puissant, tout n'est pas parfait. Elle a des limites importantes qu'il faut connaître.</p>
+<p><span class="key">Bien que</span> l'IA <span class="key">soit</span> un outil très puissant, <span class="stress">tout n'est pas parfait</span>. Elle a des limites importantes qu'il faut connaître.</p>
 
-<p><b>Premièrement, elle se trompe.</b> Surtout en mathématiques, en grammaire de langues moins courantes, ou sur des faits historiques précis. <span class="key">Il est donc essentiel que je vérifie</span> tout avant d'utiliser un document avec mes élèves. Je ne fais jamais confiance les yeux fermés.</p>
+<p><span class="transition">Premièrement</span>, <span class="main">elle se trompe.</span> Surtout en mathématiques, en grammaire de langues moins courantes, ou sur des faits historiques précis. <span class="key">Il est donc essentiel que je vérifie</span> tout avant d'utiliser un document avec mes élèves. <span class="stress">Je ne fais jamais confiance les yeux fermés.</span></p>
 
-<p><b>Deuxièmement, elle ne connaît pas mon élève.</b> Elle ne voit pas qu'il est fatigué aujourd'hui, qu'il a peur des fractions, qu'il a besoin d'encouragement à ce moment précis. C'est moi, l'enseignante, qui adapte vraiment, en temps réel.</p>
+<p><span class="transition">Deuxièmement</span>, <span class="main">elle ne connaît pas mon élève.</span> Elle ne voit pas qu'il est fatigué aujourd'hui, qu'il a peur des fractions, qu'il a besoin d'encouragement à ce moment précis. <span class="stress">C'est moi, l'enseignante, qui adapte vraiment, en temps réel.</span></p>
 
-<p><b>Troisièmement, il y a une vraie question éthique.</b> Si moi, je l'utilise, mes élèves aussi peuvent l'utiliser — y compris pour tricher. Donc je leur en parle ouvertement. <span class="key">Il faut qu'ils apprennent</span> à s'en servir comme d'un outil, pas comme d'une réponse toute faite. C'est même devenu une compétence à enseigner.</p>
+<p><span class="transition">Troisièmement</span>, <span class="main">il y a une vraie question éthique.</span> Si moi, je l'utilise, mes élèves aussi peuvent l'utiliser — y compris pour <span class="stress">tricher</span>. Donc je leur en parle ouvertement. <span class="key">Il faut qu'ils apprennent</span> à s'en servir <span class="stress">comme d'un outil, pas comme d'une réponse toute faite</span>. C'est même devenu une compétence à enseigner.</p>
 
-<p><b>Enfin, il faut savoir bien lui parler.</b> C'est ce qu'on appelle le « prompt ». Plus la demande est précise, meilleur est le résultat. Ça aussi, c'est une compétence à développer, pour les enseignants comme pour les élèves.</p>
+<p><span class="transition">Enfin</span>, <span class="main">il faut savoir bien lui parler.</span> C'est ce qu'on appelle le « <span class="stress">prompt</span> ». Plus la demande est précise, meilleur est le résultat. Ça aussi, c'est une compétence à développer, pour les enseignants comme pour les élèves.</p>
 
 <h2>6. Conclusion <span class="timing">~45 sec</span></h2>
 <div class="stage">Slides 11-12. Ralentir, regarder la salle, sourire à la fin.</div>
 
-<p>Pour conclure : <span class="key">je dirais</span> que l'IA n'est ni un miracle, ni un danger. C'est un <span class="key">outil</span>. Pour moi, comme enseignante privée, c'est devenu un assistant indispensable qui me fait gagner du temps et qui m'aide à proposer des cours plus créatifs à mes élèves. Mais elle ne remplace pas — et ne remplacera jamais — le contact humain, la patience, l'écoute. C'est-à-dire ce qui fait l'essence même du métier d'enseignant.</p>
+<p><span class="transition">Pour conclure</span> : <span class="key">je dirais</span> que <span class="main">l'IA n'est ni un miracle, ni un danger. C'est un <span class="key">outil</span>.</span> <span class="pause"></span> Pour moi, comme enseignante privée, c'est devenu un <span class="stress">assistant indispensable</span> qui me fait gagner du temps et qui m'aide à proposer des cours plus créatifs à mes élèves. <span class="pause"></span> Mais elle <span class="stress">ne remplace pas — et ne remplacera jamais</span> — le <span class="stress">contact humain, la patience, l'écoute</span>. C'est-à-dire <span class="main">ce qui fait l'essence même du métier d'enseignant</span>.</p>
 
 <p style="text-align:center;font-size:22px;color:#b03a2e;margin-top:30px"><b>Merci de votre attention !</b></p>
 
