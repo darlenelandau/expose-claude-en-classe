@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le Creuset : une histoire en couleurs</title>
+<style>
+  :root {
+    --volcan: #e2552a;
+    --volcan-dark: #b73d17;
+    --cream: #f7f1e6;
+    --ink: #2b211c;
+    --muted: #7a6a5e;
+    --cerise: #c41e2a;
+    --azur: #1f6fb3;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #1b1512; overflow: hidden; }
+  body { font-family: "Avenir Next", "Helvetica Neue", Arial, sans-serif; color: var(--ink); }
+
+  #viewport { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  #stage { width: 1600px; height: 900px; position: relative; transform-origin: center center; }
+
+  .slide {
+    position: absolute; inset: 0;
+    background: var(--cream);
+    display: grid; grid-template-columns: 1fr 1fr;
+    opacity: 0; pointer-events: none;
+    transition: opacity .45s ease;
+    overflow: hidden;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; }
+  .slide.reverse { direction: rtl; }
+  .slide.reverse > * { direction: ltr; }
+
+  .text { padding: 90px 80px 80px 90px; display: flex; flex-direction: column; justify-content: center; }
+  .num { font-size: 22px; letter-spacing: 4px; color: var(--volcan); font-weight: 700; margin-bottom: 18px; }
+  h2 {
+    font-family: Didot, "Bodoni 72", Georgia, serif;
+    font-weight: 400; font-size: 72px; line-height: 1.05; margin: 0 0 34px;
+  }
+  .bar { width: 90px; height: 6px; background: var(--volcan); border-radius: 3px; margin-bottom: 34px; }
+  ul { margin: 0; padding: 0; list-style: none; }
+  li { font-size: 30px; line-height: 1.4; margin: 0 0 18px; padding-left: 38px; position: relative; }
+  li::before {
+    content: ""; position: absolute; left: 0; top: 14px;
+    width: 16px; height: 16px; border-radius: 50%; background: var(--volcan);
+  }
+  li b { color: var(--volcan-dark); }
+  .quote { font-family: Didot, "Bodoni 72", Georgia, serif; font-style: italic; font-size: 36px; line-height: 1.3; margin: 0 0 10px; }
+  .quote-tr { font-size: 22px; color: var(--muted); margin: 0 0 28px; }
+
+  .pic { position: relative; overflow: hidden; background: #e9e0d2; }
+  .pic img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pic.contain img { object-fit: contain; padding: 40px; }
+  .pic.duo { display: grid; grid-template-rows: 1fr 1fr; gap: 0; }
+  .pic.duo img { height: 100%; }
+
+  /* titre */
+  .cover { grid-template-columns: 1.05fr 0.95fr; background: var(--volcan); color: #fff; }
+  .cover .text { padding-left: 110px; }
+  .cover .kicker { font-size: 24px; letter-spacing: 6px; text-transform: uppercase; opacity: .85; margin-bottom: 20px; }
+  .cover h1 { font-family: Didot, "Bodoni 72", Georgia, serif; font-weight: 400; font-size: 130px; line-height: .95; margin: 0 0 30px; }
+  .cover .sub { font-family: Didot, "Bodoni 72", Georgia, serif; font-style: italic; font-size: 44px; margin: 0 0 60px; }
+  .cover .who { font-size: 22px; letter-spacing: 2px; opacity: .85; }
+  .cover .pic { background: #fff; }
+
+  /* couleurs */
+  .swatches { display: flex; gap: 22px; margin-top: 10px; }
+  .sw { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 22px; color: var(--muted); }
+  .sw span { width: 74px; height: 74px; border-radius: 50%; box-shadow: inset 0 -8px 0 rgba(0,0,0,.15); }
+
+  /* fin */
+  .end { grid-template-columns: 1fr; background: var(--volcan); color: #fff; text-align: center; }
+  .end .text { align-items: center; padding: 0; }
+  .end h2 { font-size: 110px; margin-bottom: 26px; }
+  .end p { font-size: 34px; margin: 0; opacity: .9; }
+
+  /* notes */
+  #notes {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+    width: min(1100px, 92vw); max-height: 42vh; overflow: auto;
+    background: rgba(25, 20, 17, .94); color: #f4ece0;
+    border: 1px solid rgba(255,255,255,.12); border-radius: 12px;
+    padding: 18px 24px; font-size: 18px; line-height: 1.55;
+    display: none; z-index: 10;
+  }
+  #notes.on { display: block; }
+  #notes h3 { margin: 0 0 8px; font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: #f09a74; }
+
+  #hud {
+    position: fixed; right: 18px; bottom: 14px; z-index: 11;
+    font-size: 13px; color: rgba(255,255,255,.55); letter-spacing: 1px;
+  }
+  #progress { position: fixed; left: 0; top: 0; height: 4px; background: var(--volcan); z-index: 11; transition: width .4s; }
+
+  @media print {
+    @page { size: 1600px 900px; margin: 0; }
+    html, body { overflow: visible; background: none; height: auto; }
+    #viewport { position: static; display: block; }
+    #stage { transform: none !important; width: 1600px; height: auto; }
+    .slide { position: relative; opacity: 1; width: 1600px; height: 900px; break-after: page; }
+    #notes, #hud, #progress { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="viewport"><div id="stage">
+
+  <!-- 0 titre -->
+  <section class="slide cover" data-notes="">
+    <div class="text">
+      <div class="kicker">Une marque française</div>
+      <h1>Le Creuset</h1>
+      <p class="sub">Une histoire en couleurs</p>
+      <div class="who">Présentation d'Olesya I.</div>
+    </div>
+    <div class="pic"><img src="img/07.jpg" alt="Cocotte orange Volcanique"></div>
+  </section>
+
+  <!-- 1 origines -->
+  <section class="slide" data-notes="En 1925, à Fresnoy-le-Grand, dans le nord de la France, deux industriels belges fondèrent l'entreprise : Armand Desaegher, spécialiste du moulage, et Octave Aubecq, émailleur. À cette époque, la plupart des casseroles étaient en métal gris. Les fondateurs réunirent la résistance de la fonte et les qualités de l'émail. Leur première cocotte plut tout de suite aux clients.">
+    <div class="text">
+      <div class="num">01</div>
+      <h2>Les origines</h2>
+      <div class="bar"></div>
+      <ul>
+        <li><b>1925</b>, Fresnoy-le-Grand, nord de la France</li>
+        <li>Deux industriels belges : <b>Armand Desaegher</b> (moulage) et <b>Octave Aubecq</b> (émail)</li>
+        <li>Avant : des casseroles en métal gris</li>
+        <li>L'idée : la fonte + l'émail</li>
+      </ul>
+    </div>
+    <div class="pic"><img src="img/04.jpg" alt="Cocottes en fonte à l'usine"></div>
+  </section>
+
+  <!-- 2 le nom -->
+  <section class="slide reverse" data-notes="Les fondateurs choisirent le nom « Le Creuset » en référence au creuset, c'est-à-dire le récipient dans lequel on fait fondre les métaux.">
+    <div class="text">
+      <div class="num">02</div>
+      <h2>Pourquoi « Le Creuset » ?</h2>
+      <div class="bar"></div>
+      <ul>
+        <li>Un <b>creuset</b> : le récipient où l'on fait fondre les métaux</li>
+        <li>Un nom qui rappelle le travail de la <b>fonderie</b></li>
+      </ul>
+    </div>
+    <div class="pic"><img src="img/10.jpg" alt="Métal en fusion dans une fonderie"></div>
+  </section>
+
+  <!-- 3 volcanique -->
+  <section class="slide" data-notes="La toute première cocotte était de couleur « Volcanique », un orange vif tirant sur le rouge : les fondateurs voulaient une couleur qui rappelle le métal brûlant dans le creuset. Avec le temps, la marque fit de la couleur l'un de ses signes distinctifs.">
+    <div class="text">
+      <div class="num">03</div>
+      <h2>La première couleur : Volcanique</h2>
+      <div class="bar"></div>
+      <ul>
+        <li>Un <b>orange vif</b> tirant sur le rouge</li>
+        <li>Elle rappelle le <b>métal brûlant</b> dans le creuset</li>
+        <li>La couleur devient le <b>signe distinctif</b> de la marque</li>
+      </ul>
+    </div>
+    <div class="pic contain" style="background:#efe7da;"><img src="img/01.jpg" alt="Ancienne publicité Fonte Volcanique"></div>
+  </section>
+
+  <!-- 4 collections -->
+  <section class="slide reverse" data-notes="Aujourd'hui, il y a seize couleurs au catalogue. Chaque saison, les nouvelles collections s'inspirent des tendances de la décoration et proposent de nouvelles couleurs et de nouvelles formes. Par exemple, en automne, la marque sort des cocottes en forme de citrouille, et pour les fêtes de fin d'année, elle propose des modèles décorés de flocons de neige. Ma préférée, c'est la cocotte en forme de myrtille !">
+    <div class="text">
+      <div class="num">04</div>
+      <h2>Une collection pour chaque saison</h2>
+      <div class="bar"></div>
+      <ul>
+        <li>De <b>nombreuses couleurs</b> au catalogue</li>
+        <li>L'automne : des cocottes en forme de <b>citrouille</b></li>
+        <li>Les fêtes : des <b>flocons de neige</b></li>
+        <li>Ma préférée : la cocotte <b>myrtille</b></li>
+      </ul>
+    </div>
+    <div class="pic"><img src="img/02.jpg" alt="Cocotte rouge décorée pour les fêtes"></div>
+  </section>
+
+  <!-- 5 pour la vie -->
+  <section class="slide" data-notes="De nos jours, la cocotte Le Creuset est le rêve de beaucoup de passionnés de cuisine, parce que cette marque a résisté à l'épreuve du temps : de nombreuses cocottes sont utilisées dans les familles depuis plusieurs dizaines d'années. Elles sont à la fois belles et durables. C'est pourquoi beaucoup de gens acceptent de payer leur prix, entre 200 et 400 euros : c'est un investissement à long terme dans un produit qui a une très bonne réputation.">
+    <div class="text">
+      <div class="num">05</div>
+      <h2>Une cocotte pour la vie</h2>
+      <div class="bar"></div>
+      <ul>
+        <li>Le rêve des <b>passionnés de cuisine</b></li>
+        <li>Utilisées dans les familles depuis des <b>dizaines d'années</b></li>
+        <li><b>200 à 400 €</b> : un investissement à long terme</li>
+      </ul>
+    </div>
+    <div class="pic"><img src="img/06.jpg" alt="Ancienne cocotte Le Creuset dans une vitrine"></div>
+  </section>
+
+  <!-- 6 positionnement -->
+  <section class="slide reverse" data-notes="Le Creuset se positionne comme une marque haut de gamme : des produits de très grande qualité, qui peuvent pourtant convenir à tout le monde. Ses slogans le montrent bien : « Timeless elegance » (une élégance intemporelle) et « A shade for every soul » (une couleur pour chaque âme).">
+    <div class="text">
+      <div class="num">06</div>
+      <h2>Le positionnement</h2>
+      <div class="bar"></div>
+      <ul>
+        <li>Une marque <b>haut de gamme</b>… pour tout le monde</li>
+      </ul>
+      <p class="quote">« Timeless elegance »</p>
+      <p class="quote-tr">une élégance intemporelle</p>
+      <p class="quote">« A shade for every soul »</p>
+      <p class="quote-tr">une couleur pour chaque âme</p>
+    </div>
+    <div class="pic contain" style="background:#fff;"><img src="img/09.jpg" alt="Publicité « Live in Colour »"></div>
+  </section>
+
+  <!-- 7 publicité -->
+  <section class="slide" data-notes="Pourtant, on voit rarement ses publicités à la télévision. À mon avis, la meilleure publicité de la marque, ce sont ses boutiques : tout y est rangé avec soin, et le choix est impressionnant. Les réseaux sociaux jouent aussi un grand rôle : les cocottes sont si belles que les gens adorent les filmer quand ils partagent leurs recettes en ligne. C'est une publicité gratuite pour la marque !">
+    <div class="text">
+      <div class="num">07</div>
+      <h2>La meilleure publicité</h2>
+      <div class="bar"></div>
+      <ul>
+        <li>Peu de publicités à la <b>télévision</b></li>
+        <li>Des <b>boutiques</b> bien rangées, un choix impressionnant</li>
+        <li>Les <b>réseaux sociaux</b> : des recettes filmées avec les cocottes</li>
+        <li>Une publicité <b>gratuite</b> !</li>
+      </ul>
+    </div>
+    <div class="pic"><img src="img/05.jpg" alt="Boutique Le Creuset"></div>
+  </section>
+
+  <!-- 8 collaborations -->
+  <section class="slide reverse" data-notes="De plus, Le Creuset fait des collaborations avec des univers célèbres, comme Star Wars ou Star Trek. Enfin, la marque offre une garantie à vie sur ses cocottes en fonte émaillée (30 ans dans certains pays) : cela montre qu'elle a confiance en la qualité de ses produits.">
+    <div class="text">
+      <div class="num">08</div>
+      <h2>Collaborations et garantie</h2>
+      <div class="bar"></div>
+      <ul>
+        <li>Des collections avec <b>Star Wars</b> et <b>Star Trek</b></li>
+        <li>Une <b>garantie à vie</b> sur la fonte émaillée</li>
+        <li>(30 ans dans certains pays)</li>
+      </ul>
+    </div>
+    <div class="pic"><img src="img/03.jpg" alt="Cocottes de la collection Star Wars"></div>
+  </section>
+
+  <!-- 9 mon rêve -->
+  <section class="slide" style="grid-template-columns:1fr;background:#fff;" data-notes="Moi aussi, je rêve d'une cocotte Le Creuset, de couleur cerise ou bleu azur. À mon avis, ces cocottes sont vraiment esthétiques, et ces deux couleurs vont très bien avec la nourriture. Dans ma cocotte, je cuisinerais toutes sortes de ragoûts, un bœuf bourguignon et des soupes variées.">
+    <div class="pic contain" style="background:#fff;"><img src="img/08.jpg" alt="Palette des couleurs Le Creuset" style="padding:60px 120px;"></div>
+  </section>
+
+  <!-- 10 fin -->
+  <section class="slide end" data-notes="">
+    <div class="text">
+      <h2>Merci !</h2>
+      <p>Avez-vous des questions ?</p>
+    </div>
+  </section>
+
+</div></div>
+
+<div id="notes"><h3>Texte</h3><div id="notes-text"></div></div>
+<div id="hud"><span id="count"></span> · ← → pour naviguer · F plein écran · N texte</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  const stage = document.getElementById('stage');
+  const notes = document.getElementById('notes');
+  const notesText = document.getElementById('notes-text');
+  const count = document.getElementById('count');
+  const progress = document.getElementById('progress');
+  let i = 0;
+
+  function fit() {
+    const s = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = 'scale(' + s + ')';
+  }
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((el, k) => el.classList.toggle('active', k === i));
+    count.textContent = (i + 1) + ' / ' + slides.length;
+    progress.style.width = ((i + 1) / slides.length * 100) + '%';
+    const t = slides[i].dataset.notes;
+    notesText.textContent = t || '—';
+    try { history.replaceState(null, '', '#' + (i + 1)); } catch (e) {}
+  }
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(i + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key.toLowerCase() === 'n') notes.classList.toggle('on');
+    else if (e.key.toLowerCase() === 'f') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+      else document.exitFullscreen?.();
+    }
+  });
+  document.getElementById('viewport').addEventListener('click', e => {
+    show(e.clientX > window.innerWidth / 2 ? i + 1 : i - 1);
+  });
+  window.addEventListener('resize', fit);
+  fit();
+  show(parseInt(location.hash.slice(1), 10) - 1 || 0);
+</script>
+</body>
+</html>
